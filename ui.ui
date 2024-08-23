@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>703</width>
-    <height>826</height>
+    <width>712</width>
+    <height>803</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,18 +15,26 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="3">
-     <widget class="QComboBox" name="comboBox_2">
-      <item>
-       <property name="text">
-        <string>WebCam: 0</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>WebCam: 1</string>
-       </property>
-      </item>
+    <item row="4" column="3">
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>(450,450)</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>false</bool>
+      </property>
+      <property name="clearButtonEnabled">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item row="3" column="3">
@@ -48,44 +56,10 @@
       </item>
      </widget>
     </item>
-    <item row="6" column="0" colspan="4">
-     <widget class="QLabel" name="label">
+    <item row="1" column="0" colspan="2">
+     <widget class="QPushButton" name="pushButton_2">
       <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Weights</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>Source</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLabel" name="label_5">
-      <property name="text">
-       <string>Device</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0" colspan="4">
-     <widget class="QLabel" name="label_2">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>200</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
+       <string>STOP</string>
       </property>
      </widget>
     </item>
@@ -98,24 +72,64 @@
       </item>
      </widget>
     </item>
-    <item row="4" column="3">
-     <widget class="QLineEdit" name="lineEdit">
-      <property name="maximumSize">
-       <size>
-        <width>300</width>
-        <height>16777215</height>
-       </size>
-      </property>
-     </widget>
-    </item>
     <item row="4" column="2">
      <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Custom</string>
+       <string>Resolution</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
-    <item row="8" column="3">
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Weights</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Device</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QComboBox" name="comboBox_2">
+      <item>
+       <property name="text">
+        <string>WebCam: 0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>WebCam: 1</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="6" column="0" colspan="4">
+     <widget class="QLabel" name="label_2">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="3">
      <widget class="QPushButton" name="pushButton_3">
       <property name="text">
        <string>EXIT</string>
@@ -129,10 +143,20 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QPushButton" name="pushButton_2">
+    <item row="5" column="0" colspan="4">
+     <widget class="QLabel" name="label">
       <property name="text">
-       <string>STOP</string>
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Source</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -143,7 +167,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>703</width>
+     <width>712</width>
      <height>26</height>
     </rect>
    </property>

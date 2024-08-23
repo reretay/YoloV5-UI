@@ -29,6 +29,9 @@ class WindowClass(QMainWindow, MainWindow):
         self.source = '0'
         self.device = 'cpu'
         
+        # QLineEdit 초기값
+        self.lineEdit.setText("(450,450)")
+        
         # QComboBox에 대한 이벤트 핸들러 연결
         self.comboBox.currentIndexChanged.connect(self.on_combobox_changed)
         self.comboBox_2.currentIndexChanged.connect(self.on_combobox_changed)
@@ -37,7 +40,16 @@ class WindowClass(QMainWindow, MainWindow):
     def start_detection(self):
         if not self.yolo_thread or not self.yolo_thread.isRunning():
             # run(weights='yolov5s.pt', source=1, imgsz=(640, 640), conf_thres=0.25)
-            self.yolo_thread = yolov5(source=self.source, weights=self.weights, imgsz=(450,450), conf_thres=0.25, device=self.device)
+            
+            resolution = self.lineEdit.text().strip() # QLineEdit 에서 읽어오기
+            try:
+            # 문자열 "(450,450)"을 튜플 (450, 450)로 변환
+                imgsz = tuple(map(int, resolution.strip("()").split(",")))
+            except ValueError:
+                QMessageBox.warning(None, "Error", "Invalid resolution format. Please enter in the format (width,height).")
+                return
+            
+            self.yolo_thread = yolov5(source=self.source, weights=self.weights, imgsz=imgsz, conf_thres=0.25, device=self.device)
             #self.yolo_thread.image_signal.connect(self.update_image)
             self.yolo_thread.im0_signal.connect(self.im0_signal)
             self.yolo_thread.det_signal.connect(self.det_signal)
