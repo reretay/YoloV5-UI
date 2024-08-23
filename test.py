@@ -21,15 +21,36 @@ class WindowClass(QMainWindow, MainWindow):
 
         #이벤트 연결
         self.pushButton.clicked.connect(self.start_detection)
+        self.pushButton_2.clicked.connect(self.stop_detection)
+        self.pushButton_3.clicked.connect(self.end_program)
+
+        # QComboBox 초기값
+        self.weights = 'yolov5s.pt'
+        self.source = '0'
+        self.device = 'cpu'
+        
+        # QComboBox에 대한 이벤트 핸들러 연결
+        self.comboBox.currentIndexChanged.connect(self.on_combobox_changed)
+        self.comboBox_2.currentIndexChanged.connect(self.on_combobox_changed)
+        self.comboBox_3.currentIndexChanged.connect(self.on_combobox_changed)
         
     def start_detection(self):
-        # run(weights='yolov5s.pt', source=1, imgsz=(640, 640), conf_thres=0.25)
-        self.yolo_thread = yolov5(source=1, weights='yolov5s.pt', imgsz=(450,450), conf_thres=0.25)
-        #self.yolo_thread.image_signal.connect(self.update_image)
-        self.yolo_thread.im0_signal.connect(self.im0_signal)
-        self.yolo_thread.det_signal.connect(self.det_signal)
-        self.yolo_thread.start()
+        if not self.yolo_thread or not self.yolo_thread.isRunning():
+            # run(weights='yolov5s.pt', source=1, imgsz=(640, 640), conf_thres=0.25)
+            self.yolo_thread = yolov5(source=self.source, weights=self.weights, imgsz=(450,450), conf_thres=0.25, device=self.device)
+            #self.yolo_thread.image_signal.connect(self.update_image)
+            self.yolo_thread.im0_signal.connect(self.im0_signal)
+            self.yolo_thread.det_signal.connect(self.det_signal)
+            self.yolo_thread.start()
+        else:
+            QMessageBox.warning(None, "Warn!", "Detection is already in progress.")
         
+    def stop_detection(self):
+        if self.yolo_thread and self.yolo_thread.isRunning():
+            self.yolo_thread.stop()
+        else:
+            QMessageBox.warning(None, "Warn!", "No detection in progress")
+    
     def im0_signal(self, im0): #im0 시그널 처리
         #self.textBrowser.append(status)  # textBrowser에 정보 추가
         qimage = self.numpy_to_qimage(im0) # np arrray to QImage
@@ -60,7 +81,26 @@ class WindowClass(QMainWindow, MainWindow):
         else:
             raise ValueError("Unsupported image format")
 
-    
+    def on_combobox_changed(self):
+        selected_weights = self.comboBox.currentIndex()
+        selected_source = self.comboBox_2.currentIndex()
+        selected_device = self.comboBox_3.currentIndex()
+        
+        if selected_weights == 0:
+            self.weights = 'yolov5s.pt'
+            
+        if selected_source == 0:
+            self.source = '0'
+        elif selected_source == 1:
+            self.source = '1'
+        
+        if selected_device == 0:
+            self.device = 'cpu'
+        elif selected_device == 1:
+            self.device = '1'
+        elif selected_device == 2:
+            self.device = '2'
+        
     # 프로그램 종료 함수
     def end_program(self):
             QApplication.quit()

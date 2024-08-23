@@ -265,3 +265,9 @@ class yolov5(QThread):
             LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
         if update:
             strip_optimizer(weights[0])  # update model (to fix SourceChangeWarning)
+            
+    def stop(self):
+        # 스레드 강제 종료
+        if self.isRunning():
+            self.terminate()  # QThread의 terminate 메서드로 강제 종료
+            self.wait()  # 스레드가 종료될 때까지 대기 (필요에 따라)
