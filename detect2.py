@@ -56,6 +56,10 @@ class yolov5(QThread):
         self.weights = weights or ROOT / "yolov5s.pt"
         self.source = str(source) if source is not None else ROOT / "data/images" # "0"을 False 혹은 None 으로 인식하지 않게
         self.kwargs = kwargs
+        
+        # 초기화
+        self.vid_cap = None
+        self.vid_writer = None
     
     def run(self):
         try:
@@ -63,7 +67,9 @@ class yolov5(QThread):
             self.finished.emit()  # 작업 완료 신호 송출
         except Exception as e:
             self.status_updated.emit(str(e))  # 에러 발생 시 상태 업데이트
-            self.finished.emit()  # 작업 완료 신호 송출 (에러 발생 시에도)
+        finally:
+            self._release_resources()
+            self.finished.emit()
     
     def _run_inference(
         self,
@@ -265,9 +271,23 @@ class yolov5(QThread):
             LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
         if update:
             strip_optimizer(weights[0])  # update model (to fix SourceChangeWarning)
+    
+        # Release resources
+        self._release_resources()
             
     def stop(self):
         # 스레드 강제 종료
         if self.isRunning():
             self.terminate()  # QThread의 terminate 메서드로 강제 종료
             self.wait()  # 스레드가 종료될 때까지 대기 (필요에 따라)
+
+    def _release_resources(self):
+        # Release VideoCapture
+        if self.vid_cap is not None:
+            self.vid_cap.release()
+            self.vid_cap = None
+        
+        # Release VideoWriter
+        if self.vid_writer is not None:
+            self.vid_writer.release()
+            self.vid_writer = None
