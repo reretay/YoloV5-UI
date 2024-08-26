@@ -10,6 +10,7 @@ from detect2 import yolov5
 
 import cv2 # OpenCV, np 어레이를 QImage로 변환
 import numpy as np # for np array
+from deep_sort_realtime.deepsort_tracker import DeepSort # DeepSort 임포트
 
 MainWindow = uic.loadUiType("ui.ui")[0]
 
@@ -36,6 +37,11 @@ class WindowClass(QMainWindow, MainWindow):
         self.comboBox.currentIndexChanged.connect(self.on_combobox_changed)
         self.comboBox_2.currentIndexChanged.connect(self.on_combobox_changed)
         self.comboBox_3.currentIndexChanged.connect(self.on_combobox_changed)
+        
+        # DeepSort 객체 생성
+        self.deepsort = DeepSort()
+        # im0 초기화
+        self.current_im0 = None
         
     def start_detection(self):
         if not self.yolo_thread or not self.yolo_thread.isRunning():
@@ -69,9 +75,68 @@ class WindowClass(QMainWindow, MainWindow):
         pixmap = QPixmap.fromImage(qimage) # Create QPixmap from QImage
         self.label.setPixmap(pixmap) # 생성한 QImage를 label에 출력
     
+        self.current_im0 = im0 # DeepSort의 프레임을 위함
+    
     def det_signal(self, det):
+        
         det_str = str(det)
-        self.label_2.setText(det_str)
+        self.textBrowser_2.append(det_str)
+        
+        # DeepSort
+        # bboxes = []
+        # confidence = []
+        # classes = []
+        # frame = self.current_im0
+
+        # # det의 구조를 확인하고 적절하게 값을 추출
+        # for d in reversed(det):
+        #     if len(d) >= 6:  # 필요한 값이 모두 있는지 확인
+        #         *xyxy, conf, cls = d
+        #         bboxes.append(tuple(xyxy))
+        #         confidence.append(conf)
+        #         classes.append(cls)
+        
+        # track_results = self.deepsort.update_tracks(bboxes, confidence, classes, frame) # DeepSort로 객체 추적
+        # results_str = str(track_results)
+        # self..textBrowser.append(results_str)
+        
+        if len(det) > 0:
+            # det에서 필요한 값들 추출
+            bbs = []  # DeepSort가 기대하는 형식으로 변환된 바운딩 박스 리스트
+
+            for d in det:
+                d = d.cpu().numpy()  # 텐서를 numpy 배열로 변환
+                for detection in d:
+                    if len(detection) >= 6:  # 필요한 값이 모두 있는지 확인
+                        *xyxy, conf, cls = detection
+                        # xyxy -> x1, y1, x2, y2로 나누기
+                        x1, y1, x2, y2 = xyxy
+                        # 좌표를 [left, top, w, h] 형식으로 변환
+                        w = x2 - x1
+                        h = y2 - y1
+                        bbox = [x1, y1, w, h]  # [left, top, width, height] 형식
+                        bbs.append((bbox, conf, int(cls)))  # 튜플 형태로 추가
+
+            # 프레임이 유효한지 확인
+            if self.current_im0 is None:
+                self.textBrowser.append("Frame is not available")
+                return
+
+            # DeepSort로 객체 추적
+            try:
+                track_results = self.deepsort.update_tracks(bbs, frame=self.current_im0)
+                if track_results is None:
+                    self.textBrowser.append("No tracks available")
+                else:
+                    results_str = str(track_results)
+                    self.textBrowser.append(results_str)
+            except Exception as e:
+                self.textBrowser.append(f"Error: {str(e)}")
+        else:
+            self.textBrowser.append("No detections")
+
+
+
     
     def numpy_to_qimage(self, image: np.ndarray) -> QImage:
         """Convert a numpy array to QImage."""
