@@ -24,6 +24,7 @@ class WindowClass(QMainWindow, MainWindow):
         self.pushButton.clicked.connect(self.start_detection)
         self.pushButton_2.clicked.connect(self.stop_detection)
         self.pushButton_3.clicked.connect(self.end_program)
+        self.pushButton_4.clicked.connect(self.start_track_id)
 
         # QComboBox 초기값
         self.weights = 'yolov5s.pt'
@@ -124,12 +125,16 @@ class WindowClass(QMainWindow, MainWindow):
 
             # DeepSort로 객체 추적
             try:
-                track_results = self.deepsort.update_tracks(bbs, frame=self.current_im0)
-                if track_results is None:
+                self.track_results = self.deepsort.update_tracks(bbs, frame=self.current_im0)
+                if self.track_results is None:
                     self.textBrowser.append("No tracks available")
                 else:
-                    results_str = str(track_results)
-                    self.textBrowser.append(results_str)
+                    # Track 객체의 정보 추출 후 출력
+                    for track in self.track_results:
+                        track_info = (f"Track ID: {track.track_id}, "
+                                    f"BBox: {track.to_tlwh()}, ")
+                                    #f"Class ID: {track.class_id}")
+                        self.textBrowser.append(track_info)
             except Exception as e:
                 self.textBrowser.append(f"Error: {str(e)}")
         else:
@@ -158,6 +163,29 @@ class WindowClass(QMainWindow, MainWindow):
         else:
             raise ValueError("Unsupported image format")
 
+    def start_track_id(self):
+        target_track_id = self.lineEdit_2.text().strip()
+        # Track ID가 target_track_id인 객체를 찾기
+        target_track = None
+        for track in self.track_results:
+            if track.track_id == target_track_id:
+                target_track = track
+                break
+
+        if target_track is not None:
+            # 필요한 정보 추출
+            track_id = target_track.track_id
+            bbox = target_track.to_tlwh()
+            #confidence = target_track.detection_confidence
+            #class_id = target_track.class_id
+
+            self.textBrowser_3.append(f"Track ID: {track_id}")
+            self.textBrowser_3.append(f"BBox: {bbox}")
+            #self.textBrowser_3.append(f"Confidence: {confidence}")
+            #self.textBrowser_3.append(f"Class ID: {class_id}")
+        else:
+            self.textBrowser_3.append("Target track not found.")
+    
     def on_combobox_changed(self):
         selected_weights = self.comboBox.currentIndex()
         selected_source = self.comboBox_2.currentIndex()
