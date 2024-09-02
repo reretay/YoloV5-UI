@@ -33,6 +33,7 @@ class WindowClass(QMainWindow, MainWindow):
         
         # QLineEdit 초기값
         self.lineEdit.setText("(450,450)")
+        self.lineEdit_3.setText("30")
         
         # QComboBox에 대한 이벤트 핸들러 연결
         self.comboBox.currentIndexChanged.connect(self.on_combobox_changed)
@@ -72,6 +73,15 @@ class WindowClass(QMainWindow, MainWindow):
     
     def im0_signal(self, im0): #im0 시그널 처리
         #self.textBrowser.append(status)  # textBrowser에 정보 추가
+        percent = int(self.lineEdit_3.text())
+        height, width = im0.shape[:2] # im0에서 해상도 추출
+        side_length = int(min(height, width) * (percent / 100)) # 정사각형의 변 길이 계산
+        center_height, center_width = height // 2, width // 2 # 이미지 중앙 좌표 계산
+        top_left_x = center_width - side_length // 2 # 정사각형의 좌상단 좌표와 우하단 좌표 계산
+        top_left_y = center_height - side_length // 2
+        bottom_right_x = center_width + side_length // 2
+        bottom_right_y = center_height + side_length // 2
+        cv2.rectangle(im0, (top_left_x, top_left_y), (bottom_right_x, bottom_right_y), (0, 0, 255), 2)
         qimage = self.numpy_to_qimage(im0) # np arrray to QImage
         pixmap = QPixmap.fromImage(qimage) # Create QPixmap from QImage
         self.label.setPixmap(pixmap) # 생성한 QImage를 label에 출력

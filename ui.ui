@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>544</height>
+    <width>666</width>
+    <height>585</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,13 +34,6 @@
       </property>
       <property name="clearButtonEnabled">
        <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0" colspan="4">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string/>
       </property>
      </widget>
     </item>
@@ -142,9 +135,6 @@
       </item>
      </widget>
     </item>
-    <item row="0" column="4" rowspan="5">
-     <widget class="QTextBrowser" name="textBrowser_2"/>
-    </item>
     <item row="10" column="4">
      <widget class="QPushButton" name="pushButton_4">
       <property name="text">
@@ -166,11 +156,44 @@
       </property>
      </widget>
     </item>
-    <item row="8" column="4">
-     <widget class="QTextBrowser" name="textBrowser"/>
-    </item>
     <item row="9" column="4">
      <widget class="QLineEdit" name="lineEdit_2"/>
+    </item>
+    <item row="4" column="3">
+     <widget class="QLineEdit" name="lineEdit_3">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>30</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4" rowspan="4">
+     <widget class="QTextBrowser" name="textBrowser_2"/>
+    </item>
+    <item row="4" column="4" rowspan="5">
+     <widget class="QTextBrowser" name="textBrowser"/>
+    </item>
+    <item row="5" column="0" rowspan="7" colspan="4">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>BoxPercent</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -179,7 +202,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>662</width>
+     <width>666</width>
      <height>26</height>
     </rect>
    </property>
