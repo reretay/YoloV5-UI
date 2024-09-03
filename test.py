@@ -12,6 +12,9 @@ import cv2 # OpenCV, np 어레이를 QImage로 변환
 import numpy as np # for np array
 from deep_sort_realtime.deepsort_tracker import DeepSort # DeepSort 임포트
 
+import serial
+import time
+
 MainWindow = uic.loadUiType("ui.ui")[0]
 
 class WindowClass(QMainWindow, MainWindow):
@@ -76,11 +79,11 @@ class WindowClass(QMainWindow, MainWindow):
         percent = int(self.lineEdit_3.text())
         height, width = im0.shape[:2] # im0에서 해상도 추출
         side_length = int(min(height, width) * (percent / 100)) # 정사각형의 변 길이 계산
-        center_height, center_width = height // 2, width // 2 # 이미지 중앙 좌표 계산
-        top_left_x = center_width - side_length // 2 # 정사각형의 좌상단 좌표와 우하단 좌표 계산
-        top_left_y = center_height - side_length // 2
-        bottom_right_x = center_width + side_length // 2
-        bottom_right_y = center_height + side_length // 2
+        self.center_height, self.center_width = height // 2, width // 2 # 이미지 중앙 좌표 계산
+        top_left_x = self.center_width - side_length // 2 # 정사각형의 좌상단 좌표와 우하단 좌표 계산
+        top_left_y = self.center_height - side_length // 2
+        bottom_right_x = self.center_width + side_length // 2
+        bottom_right_y = self.center_height + side_length // 2
         cv2.rectangle(im0, (top_left_x, top_left_y), (bottom_right_x, bottom_right_y), (0, 0, 255), 2)
         qimage = self.numpy_to_qimage(im0) # np arrray to QImage
         pixmap = QPixmap.fromImage(qimage) # Create QPixmap from QImage
@@ -193,6 +196,39 @@ class WindowClass(QMainWindow, MainWindow):
             self.textBrowser_3.append(f"BBox: {bbox}")
             #self.textBrowser_3.append(f"Confidence: {confidence}")
             #self.textBrowser_3.append(f"Class ID: {class_id}")
+            
+            # top_left_x, top_left_y, width, height
+            top_left_x = bbox[0]
+            top_left_y = bbox[1]
+            width = bbox[2]
+            height = bbox[3]
+            # 중앙 좌표 계산
+            target_center_x = top_left_x + width / 2
+            target_center_y = top_left_y + height / 2
+            # opencv와 pyqt의 원점은 좌측 상단
+            diff_y = self.center_height - target_center_y
+            diff_x = self.center_width - target_center_x
+            
+            if diff_x < 0:
+                horizon = "right"
+            elif diff_x > 0:
+                horizon = "left"
+            else:
+                horizon = "aligned"
+                
+            if diff_y < 0:
+                vertical = "down"
+            elif diff_y > 0:
+                vertical = "up"
+            else:
+                vertical = "aligned"
+                
+            ser = serial.Serial('COM4', 9600)  # 포트 이름과 Baudrate 설정
+            data = f"{horizon},{vertical}"
+            ser.write(data.encode())  # 문자열을 바이트로 변환하여 송신
+            print(f"Sent: {data}")
+
+            
         else:
             self.textBrowser_3.append("Target track not found.")
     
