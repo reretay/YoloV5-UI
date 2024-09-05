@@ -27,7 +27,7 @@ class WindowClass(QMainWindow, MainWindow):
         self.pushButton.clicked.connect(self.start_detection)
         self.pushButton_2.clicked.connect(self.stop_detection)
         self.pushButton_3.clicked.connect(self.end_program)
-        self.pushButton_4.clicked.connect(self.start_track_id)
+        # self.pushButton_4.clicked.connect(self.start_track_id)
 
         # QComboBox 초기값
         self.weights = 'yolov5s.pt'
@@ -148,6 +148,44 @@ class WindowClass(QMainWindow, MainWindow):
                                     f"BBox: {track.to_tlwh()}, ")
                                     #f"Class ID: {track.class_id}")
                         self.textBrowser.append(track_info)
+                        if track.track_id == self.lineEdit_2.text().strip():
+
+                            bbox = track.to_tlwh()
+
+                            # top_left_x, top_left_y, width, height
+                            top_left_x = bbox[0]
+                            top_left_y = bbox[1]
+                            width = bbox[2]
+                            height = bbox[3]
+                            # 중앙 좌표 계산
+                            target_center_x = top_left_x + width / 2
+                            target_center_y = top_left_y + height / 2
+                            # opencv와 pyqt의 원점은 좌측 상단
+                            diff_y = self.center_height - target_center_y
+                            diff_x = self.center_width - target_center_x
+                            
+                            if diff_x < 0:
+                                horizon = "right"
+                            elif diff_x > 0:
+                                horizon = "left"
+                            else:
+                                horizon = "aligned"
+                                
+                            if diff_y < 0:
+                                vertical = "down"
+                            elif diff_y > 0:
+                                vertical = "up"
+                            else:
+                                vertical = "aligned"
+                            
+                            self.textBrowser_3.append(f"Vertical: {vertical}, Horizon: {horizon}")
+                            
+                            use_serial = False
+                            if use_serial:
+                                ser = serial.Serial('COM4', 9600)  # 포트 이름과 Baudrate 설정
+                                data = f"{horizon},{vertical}"
+                                ser.write(data.encode())  # 문자열을 바이트로 변환하여 송신
+
             except Exception as e:
                 self.textBrowser.append(f"Error: {str(e)}")
         else:
@@ -175,62 +213,6 @@ class WindowClass(QMainWindow, MainWindow):
             return q_image
         else:
             raise ValueError("Unsupported image format")
-
-    def start_track_id(self):
-        target_track_id = self.lineEdit_2.text().strip()
-        # Track ID가 target_track_id인 객체를 찾기
-        target_track = None
-        for track in self.track_results:
-            if track.track_id == target_track_id:
-                target_track = track
-                break
-
-        if target_track is not None:
-            # 필요한 정보 추출
-            track_id = target_track.track_id
-            bbox = target_track.to_tlwh()
-            #confidence = target_track.detection_confidence
-            #class_id = target_track.class_id
-
-            self.textBrowser_3.append(f"Track ID: {track_id}")
-            self.textBrowser_3.append(f"BBox: {bbox}")
-            #self.textBrowser_3.append(f"Confidence: {confidence}")
-            #self.textBrowser_3.append(f"Class ID: {class_id}")
-            
-            # top_left_x, top_left_y, width, height
-            top_left_x = bbox[0]
-            top_left_y = bbox[1]
-            width = bbox[2]
-            height = bbox[3]
-            # 중앙 좌표 계산
-            target_center_x = top_left_x + width / 2
-            target_center_y = top_left_y + height / 2
-            # opencv와 pyqt의 원점은 좌측 상단
-            diff_y = self.center_height - target_center_y
-            diff_x = self.center_width - target_center_x
-            
-            if diff_x < 0:
-                horizon = "right"
-            elif diff_x > 0:
-                horizon = "left"
-            else:
-                horizon = "aligned"
-                
-            if diff_y < 0:
-                vertical = "down"
-            elif diff_y > 0:
-                vertical = "up"
-            else:
-                vertical = "aligned"
-                
-            ser = serial.Serial('COM4', 9600)  # 포트 이름과 Baudrate 설정
-            data = f"{horizon},{vertical}"
-            ser.write(data.encode())  # 문자열을 바이트로 변환하여 송신
-            print(f"Sent: {data}")
-
-            
-        else:
-            self.textBrowser_3.append("Target track not found.")
     
     def on_combobox_changed(self):
         selected_weights = self.comboBox.currentIndex()
