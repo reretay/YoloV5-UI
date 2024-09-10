@@ -47,6 +47,10 @@ class WindowClass(QMainWindow, MainWindow):
         self.deepsort = DeepSort()
         # im0 초기화
         self.current_im0 = None
+
+        self.use_serial = True
+        if self.use_serial:
+            self.ser = serial.Serial('COM4', 9600)  # 포트 이름과 Baudrate 설정
         
     def start_detection(self):
         if not self.yolo_thread or not self.yolo_thread.isRunning():
@@ -180,11 +184,9 @@ class WindowClass(QMainWindow, MainWindow):
                             
                             self.textBrowser_3.append(f"Vertical: {vertical}, Horizon: {horizon}")
                             
-                            use_serial = False
-                            if use_serial:
-                                ser = serial.Serial('COM4', 9600)  # 포트 이름과 Baudrate 설정
-                                data = f"{horizon},{vertical}"
-                                ser.write(data.encode())  # 문자열을 바이트로 변환하여 송신
+                            if self.use_serial:
+                                data = f"{horizon},{vertical}\n"
+                                self.ser.write(data.encode())  # 문자열을 바이트로 변환하여 송신
 
             except Exception as e:
                 self.textBrowser.append(f"Error: {str(e)}")
