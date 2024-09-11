@@ -28,6 +28,7 @@ class WindowClass(QMainWindow, MainWindow):
         self.pushButton_2.clicked.connect(self.stop_detection)
         self.pushButton_3.clicked.connect(self.end_program)
         # self.pushButton_4.clicked.connect(self.start_track_id)
+        self.checkBox.stateChanged.connect(self.toggle_serial)
 
         # QComboBox 초기값
         self.weights = 'yolov5s.pt'
@@ -47,10 +48,6 @@ class WindowClass(QMainWindow, MainWindow):
         self.deepsort = DeepSort()
         # im0 초기화
         self.current_im0 = None
-
-        self.use_serial = True
-        if self.use_serial:
-            self.ser = serial.Serial('COM4', 9600)  # 포트 이름과 Baudrate 설정
         
     def start_detection(self):
         if not self.yolo_thread or not self.yolo_thread.isRunning():
@@ -235,7 +232,15 @@ class WindowClass(QMainWindow, MainWindow):
             self.device = '1'
         elif selected_device == 2:
             self.device = '2'
-        
+    
+    def toggle_serial(self, state):
+        if state == Qt.Checked:
+            self.use_serial=True
+            self.ser = serial.Serial('COM4', 9600)  # 포트 이름과 Baudrate 설정
+        else:
+            self.use_serial=False
+            self.ser.close()
+            
     # 프로그램 종료 함수
     def end_program(self):
             QApplication.quit()
