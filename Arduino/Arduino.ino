@@ -8,7 +8,7 @@ int posX = 90; // 서보 X의 초기 위치 (중간)
 int posY = 90; // 서보 Y의 초기 위치 (중간)
 
 void setup() {
-  Serial.begin(9600); // 시리얼 통신 시작
+  Serial.begin(115200); // 시리얼 통신 시작
 
   // 서보모터 핀 할당
   servoX.attach(9);
@@ -23,17 +23,17 @@ void loop() {
   if (Serial.available() > 0) {
     String receivedData = Serial.readStringUntil('\n'); // 시리얼 데이터 수신
 
-    if (receivedData.startsWith("left")) {
-      posX = constrain(posX - 10, 0, 180); // 왼쪽으로 10도 이동
+    if (receivedData.startsWith("right")) {
+      posX = constrain(posX - 2, 0, 180); // 오른쪽으로 10도 이동
       servoX.write(posX);
-    } else if (receivedData.startsWith("right")) {
-      posX = constrain(posX + 10, 0, 180); // 오른쪽으로 10도 이동
+    } else if (receivedData.startsWith("left")) {
+      posX = constrain(posX + 2, 0, 180); // 왼쪽으로 10도 이동
       servoX.write(posX);
-    } else if (receivedData.startsWith("up")) {
-      posY = constrain(posY - 10, 0, 180); // 위로 10도 이동
-      servoY.write(posY);
     } else if (receivedData.startsWith("down")) {
-      posY = constrain(posY + 10, 0, 180); // 아래로 10도 이동
+      posY = constrain(posY - 2, 0, 180); // 아래로 10도 이동
+      servoY.write(posY);
+    } else if (receivedData.startsWith("up")) {
+      posY = constrain(posY + 2, 0, 180); // 위로 10도 이동
       servoY.write(posY);
     }
 

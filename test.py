@@ -38,6 +38,7 @@ class WindowClass(QMainWindow, MainWindow):
         # QLineEdit 초기값
         self.lineEdit.setText("(450,450)")
         self.lineEdit_3.setText("30")
+        self.lineEdit_4.setText("20")
         
         # QComboBox에 대한 이벤트 핸들러 연결
         self.comboBox.currentIndexChanged.connect(self.on_combobox_changed)
@@ -48,6 +49,9 @@ class WindowClass(QMainWindow, MainWindow):
         self.deepsort = DeepSort()
         # im0 초기화
         self.current_im0 = None
+        # 시리얼 딜레이
+        self.serial_delay = 0
+        self.serial_delay_rate = 20
         
     def start_detection(self):
         if not self.yolo_thread or not self.yolo_thread.isRunning():
@@ -182,8 +186,14 @@ class WindowClass(QMainWindow, MainWindow):
                             self.textBrowser_3.append(f"Vertical: {vertical}, Horizon: {horizon}")
                             
                             if self.use_serial:
-                                data = f"{horizon},{vertical}\n"
-                                self.ser.write(data.encode())  # 문자열을 바이트로 변환하여 송신
+                                if self.serial_delay == self.serial_delay_rate: # 시리얼 전송 딜레이
+                                    data = f"{horizon},{vertical}\n"
+                                    self.ser.write(data.encode())  # 문자열을 바이트로 변환하여 송신
+                                    self.serial_delay = 0
+                                    # self.textBrowser.append(str(self.serial_delay))
+                                    # self.textBrowser.append(str(self.serial_delay_rate))
+                                else:
+                                    self.serial_delay += 1         
 
             except Exception as e:
                 self.textBrowser.append(f"Error: {str(e)}")
@@ -236,7 +246,8 @@ class WindowClass(QMainWindow, MainWindow):
     def toggle_serial(self, state):
         if state == Qt.Checked:
             self.use_serial=True
-            self.ser = serial.Serial('COM4', 9600)  # 포트 이름과 Baudrate 설정
+            self.ser = serial.Serial('COM4', 115200)  # 포트 이름과 Baudrate 설정
+            self.serial_delay_rate = int(self.lineEdit_4.text()) # 시리얼 전송 딜레이율 지정
         else:
             self.use_serial=False
             self.ser.close()
