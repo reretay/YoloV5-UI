@@ -101,6 +101,8 @@ class WindowClass(QMainWindow, MainWindow):
         det_str = str(det)
         self.textBrowser_2.append(det_str)
         
+        person_count = 0 #사람 카운트 초기화
+        
         # DeepSort
         # bboxes = []
         # confidence = []
@@ -135,11 +137,16 @@ class WindowClass(QMainWindow, MainWindow):
                         h = y2 - y1
                         bbox = [x1, y1, w, h]  # [left, top, width, height] 형식
                         bbs.append((bbox, conf, int(cls)))  # 튜플 형태로 추가
+                        if int(cls) == 0: #클레스 아이디가 0일때 카운트 증가
+                            person_count += 1
 
             # 프레임이 유효한지 확인
             if self.current_im0 is None:
                 self.textBrowser.append("Frame is not available")
                 return
+            
+            #프레임당 사람수 출력
+            self.textBrowser_4.append(f"Number of person detected: {person_count}")
 
             # DeepSort로 객체 추적
             try:
