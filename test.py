@@ -176,25 +176,25 @@ class WindowClass(QMainWindow, MainWindow):
                             diff_y = self.center_height - target_center_y
                             diff_x = self.center_width - target_center_x
                             
-                            if diff_x < 0:
-                                horizon = "right"
-                            elif diff_x > 0:
-                                horizon = "left"
-                            else:
-                                horizon = "aligned"
+                            # if diff_x < 0:
+                            #     horizon = "right"
+                            # elif diff_x > 0:
+                            #     horizon = "left"
+                            # else:
+                            #     horizon = "aligned"
                                 
-                            if diff_y < 0:
-                                vertical = "down"
-                            elif diff_y > 0:
-                                vertical = "up"
-                            else:
-                                vertical = "aligned"
+                            # if diff_y < 0:
+                            #     vertical = "down"
+                            # elif diff_y > 0:
+                            #     vertical = "up"
+                            # else:
+                            #     vertical = "aligned"
                             
-                            self.textBrowser_3.append(f"Vertical: {vertical}, Horizon: {horizon}")
+                            self.textBrowser_3.append(f"Vertical: {diff_y}, Horizon: {diff_x}")
                             
                             if self.use_serial:
                                 if self.serial_delay == self.serial_delay_rate: # 시리얼 전송 딜레이
-                                    data = f"{horizon},{vertical}\n"
+                                    data = f"{diff_x},{diff_y}\n"
                                     self.ser.write(data.encode())  # 문자열을 바이트로 변환하여 송신
                                     self.serial_delay = 0
                                     # self.textBrowser.append(str(self.serial_delay))
@@ -253,7 +253,7 @@ class WindowClass(QMainWindow, MainWindow):
     def toggle_serial(self, state):
         if state == Qt.Checked:
             self.use_serial=True
-            self.ser = serial.Serial('COM4', 115200)  # 포트 이름과 Baudrate 설정
+            self.ser = serial.Serial('COM9', 115200)  # 포트 이름과 Baudrate 설정
             self.serial_delay_rate = int(self.lineEdit_4.text()) # 시리얼 전송 딜레이율 지정
         else:
             self.use_serial=False
