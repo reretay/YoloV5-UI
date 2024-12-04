@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(828, 614)
+        MainWindow.resize(824, 605)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -29,6 +29,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.label_4, 1, 2, 1, 1)
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.gridLayout.addWidget(self.comboBox, 0, 3, 1, 1)
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
@@ -107,7 +108,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.label, 6, 0, 8, 4)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 828, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 824, 26))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -123,6 +124,7 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Device"))
         self.label_4.setText(_translate("MainWindow", "Source"))
         self.comboBox.setItemText(0, _translate("MainWindow", "YOLOv5"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "DroneDetection"))
         self.pushButton_3.setText(_translate("MainWindow", "EXIT"))
         self.pushButton_2.setText(_translate("MainWindow", "STOP"))
         self.label_7.setText(_translate("MainWindow", "SerialDelay"))

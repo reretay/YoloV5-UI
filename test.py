@@ -6,7 +6,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QMessageBox
 import os
 import subprocess
-from detect2 import yolov5
+from detect3 import yolov5
 
 import cv2 # OpenCV, np 어레이를 QImage로 변환
 import numpy as np # for np array
@@ -146,7 +146,7 @@ class WindowClass(QMainWindow, MainWindow):
                 return
             
             #프레임당 사람수 출력
-            self.textBrowser_4.append(f"Number of person detected: {person_count}")
+            self.textBrowser_4.append(f"Number of Drone detected: {person_count}")
 
             # DeepSort로 객체 추적
             try:
@@ -237,6 +237,8 @@ class WindowClass(QMainWindow, MainWindow):
         
         if selected_weights == 0:
             self.weights = 'yolov5s.pt'
+        elif selected_weights == 1:
+            self.weights = 'drone.pt'
             
         if selected_source == 0:
             self.source = '0'
